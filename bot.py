@@ -31,7 +31,7 @@ from dotenv import load_dotenv
 
 from pdfreader import read_pdf
 
-from send_email import send_email
+#from send_email import send_email
 
 load_dotenv(override=True)
 

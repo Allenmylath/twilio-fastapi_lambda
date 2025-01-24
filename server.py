@@ -6,6 +6,7 @@ from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 from twilio.twiml.voice_response import VoiceResponse, Connect, Stream
 from fastapi.responses import Response
+from mangum import Mangum
 
 # Initialize FastAPI app
 app = FastAPI()

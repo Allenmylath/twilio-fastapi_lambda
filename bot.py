@@ -54,14 +54,13 @@ async def run_bot(stream_sid):
 
     stt = DeepgramSTTService(
             api_key=os.getenv("DEEPGRAM_API_KEY"),
-            live_options=LiveOptions(vad_events=True, utterance_end_ms="1000"),
-          )
+    )
 
     tts = CartesiaTTSService(
         api_key=os.getenv("CARTESIA_API_KEY"),
         voice_id="79a125e8-cd45-4c13-8a67-188112f4dd22",  # British Lady
     )
-    #text = read_pdf("25 questions and responses for Jessica.pdf")
+    
 
 
     messages = [
@@ -112,13 +111,6 @@ async def run_bot(stream_sid):
 
     task = PipelineTask(pipeline, params=PipelineParams(allow_interruptions=True))
 
-    @stt.event_handler("on_speech_started")
-    async def on_speech_started(stt, *args, **kwargs):
-        await task.queue_frames([BotInterruptionFrame(), UserStartedSpeakingFrame()])
-
-    @stt.event_handler("on_utterance_end")
-    async def on_utterance_end(stt, *args, **kwargs):
-        await task.queue_frames([StopInterruptionFrame(), UserStoppedSpeakingFrame()])
 
     @transport.event_handler("on_client_connected")
     async def on_client_connected(transport, client):
@@ -128,19 +120,7 @@ async def run_bot(stream_sid):
 
     @transport.event_handler("on_client_disconnected")
     async def on_client_disconnected(transport, client):
-        '''
-        messages = context_aggregator.context.get_messages()
-        readable_conversation = "\n\n".join([
-            f"Role: {msg['role']}\nMessage: {msg['content']}"
-            for msg in messages
-        ])
-    
-        send_email(
-            recipient_email="allengeorge@dataastra.io",
-            subject="Conversation Transcript",
-            message_text=readable_conversation
-        )
-        '''
+
         await task.queue_frames([EndFrame()])
         
         

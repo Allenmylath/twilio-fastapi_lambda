@@ -17,7 +17,10 @@ from pipecat.processors.aggregators.openai_llm_context import OpenAILLMContext
 from pipecat.services.cartesia import CartesiaTTSService
 from pipecat.services.openai import OpenAILLMService
 from pipecat.services.deepgram import DeepgramSTTService
-from websocket_server import WebsocketServerParams, WebsocketServerTransport
+from pipecat.transports.network.websocket_server import (
+    WebsocketServerParams,
+    WebsocketServerTransport,
+)
 from pipecat.serializers.twilio import TwilioFrameSerializer
 from pipecat.audio.filters.noisereduce_filter import NoisereduceFilter
 

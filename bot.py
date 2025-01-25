@@ -1,8 +1,7 @@
 import os
 import sys
-from deepgram import LiveOptions
 
-#from pipecat.audio.vad.silero import SileroVADAnalyzer
+from pipecat.audio.vad.silero import SileroVADAnalyzer
 from pipecat.frames.frames import (
     BotInterruptionFrame,
     EndFrame,
@@ -18,10 +17,7 @@ from pipecat.processors.aggregators.openai_llm_context import OpenAILLMContext
 from pipecat.services.cartesia import CartesiaTTSService
 from pipecat.services.openai import OpenAILLMService
 from pipecat.services.deepgram import DeepgramSTTService
-from pipecat.transports.network.fastapi_websocket import (
-    FastAPIWebsocketTransport,
-    FastAPIWebsocketParams,
-)
+from websocket_server import WebsocketServerParams, WebsocketServerTransport
 from pipecat.serializers.twilio import TwilioFrameSerializer
 from pipecat.audio.filters.noisereduce_filter import NoisereduceFilter
 
@@ -39,15 +35,15 @@ logger.remove(0)
 logger.add(sys.stderr, level="DEBUG")
 
 
-async def run_bot(websocket_client, stream_sid):
-    transport = FastAPIWebsocketTransport(
-        websocket=websocket_client,
-        params=FastAPIWebsocketParams(
-            audio_out_enabled=True,
+async def run_bot(stream_sid):
+    transport = WebsocketServerTransport(
+            params=WebsocketServerParams(
+            host="",
+            port=443,
             audio_in_enabled=True,
             add_wav_header=False,
-            #vad_enabled=True,
-            #vad_analyzer=SileroVADAnalyzer(),
+            vad_enabled=True,
+            vad_analyzer=SileroVADAnalyzer(),
             vad_audio_passthrough=True,
             serializer=TwilioFrameSerializer(stream_sid),
             audio_in_filter=NoisereduceFilter(),
